@@ -1,32 +1,18 @@
 const Users = require('../models/users.js');
 
 module.exports = {
-    create: function (req, res) {
+    post: function (req, res) {
         Users(req.body).save() // returns a promise
             .then(
                 function (result) {
                     res.json(result);
                 })
             .catch(function (err) {
-                // just need one of these
                 console.log('error:', err);
             });
     },
 
     get: function (req, res) {
-        var id = req.swagger.params.id.value;
-        Users.findOne({
-                _id: new mongoose.Types.ObjectId(id)
-            }).exec()
-            .then((result) => {
-                res.json(result);
-            })
-            .catch(function (err) {
-                console.log('error:', err);
-            });
-    },
-
-    getAll: function (req, res) {
         Users.find().exec()
             .then((result) => {
                 res.json(result);
@@ -36,14 +22,42 @@ module.exports = {
             });
     },
 
-    updateById: function (req, res) {
+    getById: function (req, res) {
         var id = req.swagger.params.id.value;
-        Users.update({
-                _id: new mongoose.Types.ObjectId(id)
+        Users.findById({
+                _id: id
+            }).exec()
+            .then((result) => {
+                res.json(result);
+            })
+            .catch(function (err) {
+                console.log('error:', err);
+            });
+    },
+
+    put: function (req, res) {
+        var id = req.swagger.params.id.value;
+        Users.findByIdAndUpdate({
+                _id: id
             }, {
                 $set: req.body
             }).exec()
-            .then()
+            .then((result) => {
+                res.json(result);
+            })
+            .catch(function (err) {
+                console.log('error:', err);
+            });
+    },
+
+    delete: function (req, res) {
+        var id = req.swagger.params.id.value;
+        Users.findByIdAndRemove({
+                _id: id
+            }).exec()
+            .then((result) => {
+                res.json(result);
+            })
             .catch(function (err) {
                 console.log('error:', err);
             });

@@ -1,17 +1,15 @@
-const mongoose = require('../helpers/mongoose');
-mongoose.Promise = global.Promise; // native promises
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const ObjectId = Schema.ObjectId;
+const ObjectId = Schema.ObjectId; // set type as an ObjectId to reference other documents.
 
-// schema
 const userSchema = Schema({
+    name: String,
     email: {
         type: String,
         required: true,
         unique: true,
         dropDups: true
     },
-    name: String,
     password: String,
     created: {
         type: Date,
