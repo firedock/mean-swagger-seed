@@ -1,26 +1,22 @@
 var mongoose = require('mongoose');
+var uri = 'mongodb://' + process.env.DB_HOST + '/' + process.env.DB_DATABASE; // open
 
-let uri = 'mongodb://' + process.env.DB_HOST + '/' + process.env.DB_DATABASE;
-
-if (process.env.DB_USER && process.env.DB_PASSWORD)
+if (process.env.DB_USER && process.env.DB_PASSWORD) // auth
   uri = 'mongodb://' + process.env.DB_USER + ':' + process.env.DB_PASSWORD + '@' + process.env.DB_HOST + '/' + process.env.DB_DATABASE + '?authSource=admin';
 
-var mongodb = null;
-
-var options = {
-  server: { poolSize: 5 }
-}
-
-mongoose.connect(uri, options);
+// make connection
+mongoose.connect(uri, {
+  useMongoClient: true
+});
 
 var db = mongoose.connection;
 
-// error
+// on error
 db.on('error', console.error.bind(console, 'connection error:'));
 
-// success
+// on success
 db.once('open', function () {
-  mongodb = true;
+  console.log('MongoDB connection successful.');
 });
 
 module.exports = mongoose;

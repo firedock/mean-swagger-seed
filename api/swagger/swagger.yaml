@@ -18,14 +18,35 @@ consumes:
 produces:
   - application/json
 paths:
+  /users/create:
+    x-swagger-router-controller: users
+    post:
+      tags:
+      - Users
+      description: 'Create a single user record.'
+      parameters:
+      - name: data
+        in: body
+        description: User Data
+        required: true
+        schema:
+          $ref: '#/definitions/User'
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/User"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
   /users/:
     x-swagger-router-controller: users
     get:
+      operationId: getAll
       tags:
       - Users
-      description: 'Returns all users records.'
-      operationId: getAllUsers
-      parameters: []
+      description: 'Return all user records.'
       responses:
         "200":
           description: Success
@@ -39,17 +60,15 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /users/{email}:
+  /users/{id}:
     x-swagger-router-controller: users
     get:
       tags:
       - Users
       description: 'Returns a single user record.'
-      operationId: getUser
       parameters:
-        - name: email
+        - name: id
           in: path
-          description: 'Find a user by email.'
           required: true
           type: string
       responses:
@@ -68,9 +87,14 @@ definitions:
   User:
     type: 'object'
     properties:
-      userId:
-        type: 'integer'
+      _id:
+        type: 'string'
+        readOnly: true
+      name:
+        type: 'string'
       email:
+        type: 'string'
+      password:
         type: 'string'
         
   ErrorResponse:

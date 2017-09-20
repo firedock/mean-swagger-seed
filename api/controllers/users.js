@@ -1,55 +1,51 @@
 const Users = require('../models/users.js');
 
 module.exports = {
-    // create
-    post: function (req, res) {
-        Users.createUser(req.body)
+    create: function (req, res) {
+        Users(req.body).save() // returns a promise
             .then(
                 function (result) {
-                    res.json({
-                        data: result
-                    });
-                },
-                function (err) {
-                    res.json({
-                        data: {
-                            'error': err.code,
-                            'msg': err.message
-                        }
-                    });
-                }
-            );
+                    res.json(result);
+                })
+            .catch(function (err) {
+                // just need one of these
+                console.log('error:', err);
+            });
     },
 
-    // read
     get: function (req, res) {
         var id = req.swagger.params.id.value;
-        Users.getUserById(id)
-            .then(
-                function (result) {
-                    res.json({
-                        data: result
-                    });
-                }
-            );
+        Users.findOne({
+                _id: new mongoose.Types.ObjectId(id)
+            }).exec()
+            .then((result) => {
+                res.json(result);
+            })
+            .catch(function (err) {
+                console.log('error:', err);
+            });
     },
 
-    // update
-    put: function (req, res) {
+    getAll: function (req, res) {
+        Users.find().exec()
+            .then((result) => {
+                res.json(result);
+            })
+            .catch(function (err) {
+                console.log('error:', err);
+            });
+    },
+
+    updateById: function (req, res) {
         var id = req.swagger.params.id.value;
-        var data = req.body;
-        Users.updateUserById(id, data)
-            .then(
-                function (result) {
-                    res.json({
-                        data: result
-                    });
-                }
-            );
-    },
-
-    // delete
-    delete: function (req, res) {
-        res.json({});
+        Users.update({
+                _id: new mongoose.Types.ObjectId(id)
+            }, {
+                $set: req.body
+            }).exec()
+            .then()
+            .catch(function (err) {
+                console.log('error:', err);
+            });
     }
 };
