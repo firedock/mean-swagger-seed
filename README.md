@@ -21,6 +21,7 @@ The Swagger Editor will allow you to make calls to the Express API.
 ## To Do
 1. User authentication with Passport OAuth, password encryption.
 2. Angular 4 Interface, use Postman, your browser, or the Swagger Editor until then.
+3. Dockerize
 
 ## Suggestions
 You can interact with your API's endpoints with SwaggerUI: https://swagger.io/swagger-ui/
