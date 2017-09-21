@@ -1,23 +1,26 @@
 'use strict';
 
-var SwaggerConnect = require('swagger-connect');
-var app = require('connect')();
+var SwaggerExpress = require('swagger-express-mw');
+var app = require('express')();
+var mongoose = require('mongoose');
+mongoose.Promise = global.Promise; // native promises
 module.exports = app; // for testing
 
 // config
+var config = {
+  appRoot: __dirname // required config
+};
+
 require('dotenv').config({ // require env vars
   path: './config/.env'
 });
 
-// mongo connection
-var mongoose = require('mongoose');
-mongoose.Promise = global.Promise; // native promises
+// mongo connection via mongoose
 var uri = 'mongodb://' + process.env.DB_HOST + '/' + process.env.DB_DATABASE; // open
 if (process.env.DB_USER && process.env.DB_PASSWORD) // auth
   uri = 'mongodb://' + process.env.DB_USER + ':' + process.env.DB_PASSWORD + '@' + process.env.DB_HOST + '/' + process.env.DB_DATABASE + '?authSource=admin';
 
-// make connection
-mongoose.connect(uri, {
+  mongoose.connect(uri, {
   useMongoClient: true
 });
 var db = mongoose.connection;
@@ -25,18 +28,14 @@ var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'mongo connection error:'));
 // on success
 db.once('open', function () {
-  console.log('mongo connection successful.');
+  console.log('mongoDB connected via mongoose.');
 });
 
-var config = {
-  appRoot: __dirname // required config
-};
-
-SwaggerConnect.create(config, function(err, swaggerConnect) {
+SwaggerExpress.create(config, function(err, swaggerExpress) {
   if (err) { throw err; }
 
   // install middleware
-  swaggerConnect.register(app);
+  swaggerExpress.register(app);
 
   var port = process.env.PORT || 10010;
   app.listen(port);
